@@ -4,6 +4,7 @@ const {
   createUser,
   getUserById,
   updateUser,
+  deleteUser,
 } = require("../../controllers/userController.js");
 
 // the url /api/user/
@@ -11,6 +12,6 @@ const {
 router.route("/").get(getUsers).post(createUser);
 
 //get a user base on the id
-router.route("/:id").get(getUserById).put(updateUser);
+router.route("/:id").get(getUserById).put(updateUser).delete(deleteUser);
 
 module.exports = router;
