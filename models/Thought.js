@@ -1,6 +1,38 @@
 const mongoose = require("mongoose");
-
-const thoughtschema = mangoose.schema(
+// defining reactionSchema to use as a subdocument for thoughts scheam
+const reactionSchema = mongoose.schema(
+  {
+    reactionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => mongoose.type.ObjectId(),
+    },
+    reactionBody: {
+      type: String,
+      required: true,
+      maxlength: 280,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (value) => {
+        return value.toISOString();
+      },
+    },
+  },
+  {
+    toJSON: {
+      getters: true, // this applies getters when converting to JSON
+    },
+    toObject: {
+      getters: true, // this Applies getters when converting to plain objects
+    },
+  }
+);
+const thoughtschema = mongoose.schema(
   {
     thoughtText: {
       type: String,
@@ -19,15 +51,21 @@ const thoughtschema = mangoose.schema(
       type: String,
       required: true,
     },
-    reactions: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "reaction",
-    },
+    reactions: [reactionSchema],
   },
   {
     toJson: {
       virtuals: true,
+      getters: true, // for convering to JSON
+    },
+    toObject: {
+      virtuals: true,
+      getters: ture,
     },
     id: false,
   }
 );
+
+const Thought = mongoose.model("thought", thoughtschema);
+
+module.exports = Thought;
