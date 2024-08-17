@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 // defining reactionSchema to use as a subdocument for thoughts scheam
-const reactionSchema = mongoose.schema(
+const reactionSchema = mongoose.Schema(
   {
     reactionId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,7 +32,7 @@ const reactionSchema = mongoose.schema(
     },
   }
 );
-const thoughtschema = mongoose.schema(
+const thoughtschema = mongoose.Schema(
   {
     thoughtText: {
       type: String,
@@ -60,12 +60,16 @@ const thoughtschema = mongoose.schema(
     },
     toObject: {
       virtuals: true,
-      getters: ture,
+      getters: true,
     },
     id: false,
   }
 );
 
 const Thought = mongoose.model("thought", thoughtschema);
+
+thoughtschema.virtual("reactionCount").get(function () {
+  return this.reaction.length;
+});
 
 module.exports = Thought;

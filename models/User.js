@@ -1,4 +1,4 @@
-const { Schema, model } = require("mangoose");
+const { Schema, model } = require("mongoose");
 
 // schema to create User model
 const userSchema = new Schema(
@@ -20,13 +20,13 @@ const userSchema = new Schema(
     },
     thoughts: [
       {
-        type: Schema.Type.objectId,
+        type: Schema.Types.ObjectId,
         ref: "Thoughts",
       },
     ],
     friends: [
       {
-        type: Schema.Type.objectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
       },
     ],

@@ -2,7 +2,7 @@ const express = require("express");
 // for connection with database
 const db = require("./config/connection.js");
 // for route api
-// const routes = require("./routes");
+const routes = require("./routes");
 // path file system
 const cwd = process.cwd();
 
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-// app.use(routes);
+app.use(routes);
 
 db.once("open", () => {
   app.listen(PORT, () => {
