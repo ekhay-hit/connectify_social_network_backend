@@ -30,7 +30,13 @@ module.exports = {
 
   async getUserById(req, res) {
     try {
-      const user = await User.findById(req.params.id);
+      const user = await User.findById({ _id: req.params.id })
+        .select("-__v")
+        // .populate("friends", "thoughts");
+        .populate([
+          { path: "friends", select: "-__v" },
+          { path: "thoughts", select: "-__v" },
+        ]);
 
       if (!user) {
         return res
@@ -39,6 +45,28 @@ module.exports = {
       }
 
       res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  },
+
+  // update a user base on the Id passed
+
+  async updateUser(req, res) {
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: req.params.id },
+        { username: req.body.username, email: req.body.email },
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res
+          .status(404)
+          .json({ message: "No user found with associated id" });
+      }
+
+      res.status(200).json({ updatedUser, message: "user updated" });
     } catch (err) {
       res.status(500).json(err);
     }
