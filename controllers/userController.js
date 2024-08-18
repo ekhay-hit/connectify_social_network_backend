@@ -1,4 +1,5 @@
 const { User, Thought } = require("../models");
+const { findById } = require("../models/User");
 
 module.exports = {
   // post request to create a user
@@ -102,6 +103,10 @@ module.exports = {
         return res.status(404).json({ message: "user not found" });
       }
 
+      if (findUser.friends.includes(friendId)) {
+        return res.status(201).json("User already exist in the friend list");
+      }
+
       // if it is found add it to the array of friends then save the user
       findUser.friends.push(friendId);
       await findUser.save();
@@ -109,6 +114,39 @@ module.exports = {
       res.status(200).json("Friend has been added successfully ");
     } catch (err) {
       res.status(500).json(err);
+    }
+  },
+
+  // this will remove a friend from a user friends
+
+  async removeFriendFromUser(req, res) {
+    // retrieving the parameters
+    const userId = req.params.id;
+    const friendId = req.params.friendId;
+
+    try {
+      const user = await User.findById(userId);
+
+      // if there isn't a user
+      if (!user) {
+        return res.status(404).json("user not found");
+      }
+
+      // check if the friend exist in the user list of friend
+      if (user.friends.includes(friendId)) {
+        // if it exist remove it
+        user.friends.splice(friendId, 1);
+        // save the user document
+        await user.save();
+        // return respond
+        res.status(200).json("Friend removed from the list");
+      } else {
+        // else the friend is not in the list return this response
+        res.status(404).json("friend is not in the list of this user");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
     }
   },
 };
