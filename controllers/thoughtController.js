@@ -6,30 +6,26 @@ module.exports = {
   async createThought(req, res) {
     try {
       //   const userId = req.params.userId;
-      const createrId = req.params.createrId;
+      const createrId = req.params.id;
 
       // find the user that created the thought
       const createrUser = await User.findById(createrId);
       // extract the user name of the user
       const createrUsername = createrUser.username;
 
-      // find the
-      //   const findUser = await User.findById(userId);
-
       // check if the user exist and return a response if not
       if (!createrUser) {
         return res.status(404).json("No user found with request id");
       }
 
+      // create a thought
       const thought = await Thought.create({
         thoughtText: req.body.thoughtText,
         username: createrUsername,
       });
+
       // push the thought's id to the array of the user that created it
-      const thought_id = thought._id;
-      console.log("This is the thought id");
-      console.log(thought_id);
-      createrUser.thoughts.push(thought_id);
+      createrUser.thoughts.push(thought._id);
       await createrUser.save();
 
       res.status(200).json({
@@ -53,6 +49,23 @@ module.exports = {
       }
 
       res.status(200).json(thoughts);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  // Get thought by id
+
+  async getThoughtById(req, res) {
+    const thought_id = req.params.id;
+    try {
+      const thought = await Thought.findById(thought_id);
+
+      if (!thought) {
+        return res.status(404).json("No thought found with associated id");
+      }
+
+      res.status(200).json(thought);
     } catch (err) {
       res.status(500).json(err);
     }
