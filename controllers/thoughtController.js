@@ -71,5 +71,29 @@ module.exports = {
     }
   },
 
+  // update Thought using its id
+  async updateThought(req, res) {
+    const thought_id = req.params.id;
+
+    try {
+      // update the content base on the id and return the updated version
+      const thought = await Thought.findOneAndUpdate(
+        { _id: thought_id },
+        { thoughtText: req.body.thoughtText },
+        { new: true }
+      );
+
+      // if no thought found return no found response
+      if (!thought) {
+        return res.status(404).json("No thought found with the associated id");
+      }
+
+      res.status(200).json(thought);
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  },
+
   // end of exporting
 };
