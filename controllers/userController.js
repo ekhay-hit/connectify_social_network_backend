@@ -87,4 +87,28 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  // adding a friend to a user
+
+  async addFriendToUser(req, res) {
+    try {
+      // retrieve the id of the friend that need to be added to the user
+      const friendId = req.params.friendId;
+      const userId = req.params.id;
+      // find the user that we need to add friend to its list
+      const findUser = await User.findById(userId);
+      // if no user find return respons
+      if (!findUser) {
+        return res.status(404).json({ message: "user not found" });
+      }
+
+      // if it is found add it to the array of friends then save the user
+      findUser.friends.push(friendId);
+      await findUser.save();
+
+      res.status(200).json("Friend has been added successfully ");
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
 };
