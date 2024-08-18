@@ -37,8 +37,8 @@ const thoughtschema = mongoose.Schema(
     thoughtText: {
       type: String,
       required: true,
-      minlength: [1, "must be at least one characters log"],
-      maxlength: [280, "connot exceed 280 characters"],
+      minlength: [1, "must be at least one characters long"],
+      maxlength: [280, "cannot exceed 280 characters"],
     },
     createdAt: {
       type: Date,
@@ -54,7 +54,7 @@ const thoughtschema = mongoose.Schema(
     reactions: [reactionSchema],
   },
   {
-    toJson: {
+    toJSON: {
       virtuals: true,
       getters: true, // for convering to JSON
     },
@@ -69,7 +69,7 @@ const thoughtschema = mongoose.Schema(
 const Thought = mongoose.model("thought", thoughtschema);
 
 thoughtschema.virtual("reactionCount").get(function () {
-  return this.reaction.length;
+  return this.reactions.length;
 });
 
 module.exports = Thought;

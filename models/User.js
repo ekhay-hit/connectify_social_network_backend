@@ -40,14 +40,14 @@ const userSchema = new Schema(
   }
 );
 
-// hook that remove the associated thought before removing any user
-// userSchema.pre("remove", async function (next) {
-//   const user = this;
+//hook that remove the associated thought before removing any user
+userSchema.pre("remove", async function (next) {
+  const user = this;
 
-//   await Thought.deleteMany({ user: user._id });
+  await Thought.deleteMany({ user: user._id });
 
-//   next();
-// });
+  next();
+});
 
 //initializing User model
 const User = model("user", userSchema);
