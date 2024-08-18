@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 // defining reactionSchema to use as a subdocument for thoughts scheam
 const reactionSchema = mongoose.Schema(
   {
-    reactionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: () => mongoose.type.ObjectId(),
-    },
+    // reactionId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   default: () => new mongoose.Types.ObjectId(),
+    // },
     reactionBody: {
       type: String,
       required: true,
@@ -25,10 +25,12 @@ const reactionSchema = mongoose.Schema(
   },
   {
     toJSON: {
-      getters: true, // this applies getters when converting to JSON
+      getters: true, // this applies getters when converting to
+      virtuals: false, // disable virtual id to avoid having two ids in the document
     },
     toObject: {
       getters: true, // this Applies getters when converting to plain objects
+      virtuals: false, // disable virtual id to avoid having two ids in the document
     },
   }
 );

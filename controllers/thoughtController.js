@@ -1,4 +1,5 @@
 const { User, Thought } = require("../models");
+const { findOneAndDelete } = require("../models/User");
 
 module.exports = {
   // function that will create a post and add it to User array to
@@ -95,5 +96,66 @@ module.exports = {
     }
   },
 
+  // Delete thought using a thought id
+  async deleteThought(req, res) {
+    const thought_id = req.params.id;
+
+    try {
+      const thought = await Thought.findOneAndDelete(thought_id);
+      if (!thought) {
+        return res.status(404).json("no thought found with requested id");
+      }
+
+      res.status(200).json("Thought has been deleted");
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  },
+
+  // add reaction to a thoughts reactons array /:id/reactions/:reaction_id
+
+  async addReaction(req, res) {
+    //get the id of the user the create the reaction
+    const createrId = req.params.id;
+    // get the thought where the reaction happened
+    const thoughtId = req.params.thought_id;
+
+    try {
+      // get the infomation of the creator user
+      const createrUser = await User.findById(createrId);
+      // get the information for the thought
+      const thought = await Thought.findById(thoughtId);
+
+      // if thought does not exists return
+      if (!thought) {
+        return res.status(404).json("Thought not found");
+      }
+
+      // get the username of the creator user
+      const createrUsername = createrUser.username;
+
+      // construct the reaction
+      const reaction = {
+        reactionBody: req.body.reactionBody,
+        username: createrUsername,
+      };
+
+      console.log("this is the reaction that is being pushed to the array");
+      console.log(reaction);
+
+      // push the reaction
+      thought.reactions.push(reaction);
+      // wait till it is saved
+      await thought.save();
+
+      res
+        .status(200)
+        .json({ thought, message: "reaction has been added to thought" });
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  },
   // end of exporting
 };
