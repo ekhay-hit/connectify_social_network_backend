@@ -1,5 +1,5 @@
 const { User, Thought } = require("../models");
-const { findOneAndDelete } = require("../models/User");
+const { findOneAndDelete, findById } = require("../models/User");
 
 module.exports = {
   // function that will create a post and add it to User array to
@@ -119,7 +119,7 @@ module.exports = {
     //get the id of the user the create the reaction
     const createrId = req.params.id;
     // get the thought where the reaction happened
-    const thoughtId = req.params.thought_id;
+    const thoughtId = req.params._id;
 
     try {
       // get the infomation of the creator user
@@ -152,6 +152,31 @@ module.exports = {
       res
         .status(200)
         .json({ thought, message: "reaction has been added to thought" });
+    } catch (err) {
+      res.status(500).json(err);
+      console.log(err);
+    }
+  },
+
+  // function that will delete reaction using post id and reaction id
+
+  async deleteReaction(req, res) {
+    const thought_id = req.params.id;
+    const reaction_id = req.params._id;
+    console.log("This is the thought id");
+    console.log(thought_id);
+    try {
+      const thought = await Thought.findOneAndUpdate(
+        { _id: thought_id },
+        { $pull: { reactions: { _id: reaction_id } } },
+        { new: true }
+      );
+
+      if (!thought) {
+        return res.status(404).json("No thought found with the id");
+      }
+
+      res.status(200).json({ thought, message: " reaction deleted" });
     } catch (err) {
       res.status(500).json(err);
       console.log(err);
